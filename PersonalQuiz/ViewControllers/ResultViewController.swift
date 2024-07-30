@@ -13,15 +13,12 @@ final class ResultViewController: UIViewController {
     @IBOutlet var descriptionLabel: UILabel!
     
     var answers: [Animal]!
-    private var result: Animal? {
-        getResult(from: answers)
-    }
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.hidesBackButton = true
-        resultLabel.text = "Вы - \(result?.rawValue ?? " ")"
-        descriptionLabel.text = "\(result?.definition ?? "")"
+        getResult()
     }
     
     
@@ -36,15 +33,22 @@ final class ResultViewController: UIViewController {
 }
 
 extension ResultViewController {
-    private func getResult(from answers: [Animal]) -> Animal? {
+    private func getResult() {
         let dogs = answers.filter { $0 == Animal.dog }
         let cats = answers.filter { $0 == Animal.cat }
         let rabbits = answers.filter { $0 == Animal.rabbit }
         let turtles = answers.filter { $0 == Animal.turtle }
         
         let animals = [dogs, cats, rabbits, turtles]
-        let results = animals.sorted { $0.count > $1.count }.flatMap { $0 }
+        let results = animals.sorted { $0.count > $1.count }
+        guard let result = results.first?.first else { return }
         
-        return results.first
+        updateUI(with: result)
+        
+    }
+    
+    private func updateUI(with animal: Animal) {
+        resultLabel.text = "Вы - \(animal.rawValue)!"
+        descriptionLabel.text = "\(animal.definition)"
     }
 }
